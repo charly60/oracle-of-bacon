@@ -24,6 +24,7 @@ public class APIEndPoint {
 
     @Get("bacon-to?actor=:actorName")
     public String getConnectionsToKevinBacon(String actorName) {
+        redisRepository.addQuery(actorName);
 
         // target command in Neo4j
         //MATCH (Bacon:Actor {name:'Bacon, Kevin (I)'}), (Freeman:Actor {name:'Freeman, Morgan (I)'}), p = shortestPath((Bacon)-[*]-(Freeman)) RETURN p
@@ -82,7 +83,6 @@ public class APIEndPoint {
 
     @Get("suggest?q=:searchQuery")
     public List<String> getActorSuggestion(String searchQuery) {
-        redisRepository.addQuery(searchQuery);
 
 
         return Arrays.asList("Niro, Chel",
