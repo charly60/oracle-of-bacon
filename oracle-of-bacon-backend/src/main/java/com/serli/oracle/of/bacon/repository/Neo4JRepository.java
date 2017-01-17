@@ -58,7 +58,6 @@ public class Neo4JRepository {
         }
 
         session.close();
-        System.out.println(ls.toString());
         return ls;
     }
 

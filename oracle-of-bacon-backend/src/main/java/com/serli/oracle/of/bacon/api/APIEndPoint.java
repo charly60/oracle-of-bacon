@@ -35,8 +35,7 @@ public class APIEndPoint {
         }
         res += l.get(l.size()-1);
         res += "]";
-        System.out.println("----------------------------------------------");
-        System.out.println(res);
+
         return res;
 
                 /*"[\n" +
@@ -83,7 +82,7 @@ public class APIEndPoint {
 
     @Get("suggest?q=:searchQuery")
     public List<String> getActorSuggestion(String searchQuery) {
-
+        redisRepository.addQuery(searchQuery);
 
 
         return Arrays.asList("Niro, Chel",
@@ -98,11 +97,7 @@ public class APIEndPoint {
 
 
 
-        return Arrays.asList("Peckinpah, Sam",
-                "Robbins, Tim (I)",
-                "Freeman, Morgan (I)",
-                "De Niro, Robert",
-                "Pacino, Al (I)");
+        return redisRepository.getLastTenSearches();
     }
 
     @Get("actor?name=:actorName")
