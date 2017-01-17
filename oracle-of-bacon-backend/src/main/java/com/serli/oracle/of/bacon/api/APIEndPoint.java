@@ -25,7 +25,21 @@ public class APIEndPoint {
     @Get("bacon-to?actor=:actorName")
     public String getConnectionsToKevinBacon(String actorName) {
 
-        return "[\n" +
+        // target command in Neo4j
+        //MATCH (Bacon:Actor {name:'Bacon, Kevin (I)'}), (Freeman:Actor {name:'Freeman, Morgan (I)'}), p = shortestPath((Bacon)-[*]-(Freeman)) RETURN p
+
+        List<?> l = neo4JRepository.getConnectionsToKevinBacon(actorName);
+        String res = "[\n";
+        for (int i =0; i< l.size()-1;i++){
+            res += l.get(i) + ", ";
+        }
+        res += l.get(l.size()-1);
+        res += "]";
+        System.out.println("----------------------------------------------");
+        System.out.println(res);
+        return res;
+
+                /*"[\n" +
                 "{\n" +
                 "\"data\": {\n" +
                 "\"id\": 85449,\n" +
@@ -64,10 +78,14 @@ public class APIEndPoint {
                 "}\n" +
                 "}\n" +
                 "]";
+                */
     }
 
     @Get("suggest?q=:searchQuery")
     public List<String> getActorSuggestion(String searchQuery) {
+
+
+
         return Arrays.asList("Niro, Chel",
                 "Senanayake, Niro",
                 "Niro, Juan Carlos",
@@ -77,6 +95,9 @@ public class APIEndPoint {
 
     @Get("last-searches")
     public List<String> last10Searches() {
+
+
+
         return Arrays.asList("Peckinpah, Sam",
                 "Robbins, Tim (I)",
                 "Freeman, Morgan (I)",
@@ -86,6 +107,9 @@ public class APIEndPoint {
 
     @Get("actor?name=:actorName")
     public String getActorByName(String actorName) {
+
+
+
         return "{\n" +
                 "\"_id\": {\n" +
                 "\"$oid\": \"587bd993da2444c943a25161\"\n" +
