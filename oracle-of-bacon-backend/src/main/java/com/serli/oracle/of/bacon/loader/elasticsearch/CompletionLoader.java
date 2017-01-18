@@ -49,7 +49,7 @@ public class CompletionLoader {
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(inputFilePath))) {
             List<String> list = bufferedReader.lines().map(String::new).collect(Collectors.toCollection(ArrayList::new));
             for (int i = 0; i < list.size(); i++) {
-                String res = "{ \"name\" : " + list.get(i) + ",\n" +
+                String res = "{ \"name\" : " + list.get(i) + "," +
                         " \"name_suggest\" : " + list.get(i) + "}";
                 builder.addAction(new Index.Builder(res).build());
 
