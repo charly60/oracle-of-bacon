@@ -34,6 +34,7 @@ public class CompletionLoader {
                         //TODO ElasticSearch insert
                         //System.out.println(line);
                         list.add(new Index.Builder(line).build());
+                        System.out.println(line);
                     });
         }
 
