@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CompletionLoader {
@@ -25,13 +26,46 @@ public class CompletionLoader {
         JestClient client = ElasticSearchRepository.createClient();
 
 
+        ArrayList<Index> list = new ArrayList<>();
+
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(inputFilePath))) {
             bufferedReader.lines()
                     .forEach(line -> {
+                        //TODO ElasticSearch insert
+                        //System.out.println(line);
+                        list.add(new Index.Builder(line).build());
 
-                        System.out.println(line);
+                        if(list.size()>10000){
+                            Bulk bulk = new Bulk.Builder()
+                                    .defaultIndex("Actor")
+                                    .defaultType("name")
+                                    .addAction(list)
+                                    .build();
+                            try {
+                                client.execute(bulk);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            list.clear();
+                            System.out.println("10000 added");
+                        }
+
+
                     });
+            Bulk bulk = new Bulk.Builder()
+                    .defaultIndex("Actor")
+                    .defaultType("name")
+                    .addAction(list)
+                    .build();
+            try {
+                client.execute(bulk);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(list.size() + " added");
         }
+
+
 
         System.out.println("Inserted total of " + count.get() + " actors");
     }
