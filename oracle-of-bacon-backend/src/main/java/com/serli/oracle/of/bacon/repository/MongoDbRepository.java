@@ -18,6 +18,17 @@ public class MongoDbRepository {
 
     public Optional<Document> getActorByName(String name) {
         // TODO implement actor fetch
-        return null;
+        Document doc = mongoClient.getDatabase("workshop")
+                .getCollection("actors")
+                .find(new Document("name", name))
+                .first();
+
+        return Optional.ofNullable(doc);
+    }
+
+    public static void main(String[] args) {
+        MongoDbRepository mongo = new MongoDbRepository();
+        Optional<Document> doc = mongo.getActorByName("Tom Hanks");
+        System.out.println(doc.toString());
     }
 }
