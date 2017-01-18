@@ -4,6 +4,7 @@ import com.serli.oracle.of.bacon.repository.ElasticSearchRepository;
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Bulk;
 import io.searchbox.core.Index;
+import io.searchbox.indices.mapping.PutMapping;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +28,19 @@ public class CompletionLoader {
 
         String inputFilePath = args[0];
         JestClient client = ElasticSearchRepository.createClient();
+        PutMapping putMapping = new PutMapping.Builder("actor","name",
+                " {\"name\" : {" +
+                        " \"properties\": {\n" +
+                        " \"name\": {\"type\": \"string\"},\n" +
+                        " \"name_suggest\": {\n" +
+                        " \"type\": \"completion\"\n" +
+                        " }\n" +
+                        " }\n" +
+                        " }\n" +
+                        " }"
+        ).build();
+        client.execute(putMapping);
+
         Bulk.Builder builder = new Bulk.Builder()
                 .defaultIndex("actor")
                 .defaultType("name");
@@ -34,10 +48,9 @@ public class CompletionLoader {
 
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(inputFilePath))) {
             List<String> list = bufferedReader.lines().map(String::new).collect(Collectors.toCollection(ArrayList::new));
-            System.out.println(list.size());
             for (int i = 0; i < list.size(); i++) {
-                System.out.println(list.get(i));
-                String res = "{ \"name\" : " + list.get(i) + "}";
+                String res = "{ \"name\" : " + list.get(i) + ",\n" +
+                        " \"name_suggest\" : " + list.get(i) + "}";
                 builder.addAction(new Index.Builder(res).build());
 
                 if (i % 10000 == 0) {
@@ -52,6 +65,7 @@ public class CompletionLoader {
 
             Bulk bulk = builder.build();
             client.execute(bulk);
+
 
 
             System.out.println(list.size() % 10000 + " added");
