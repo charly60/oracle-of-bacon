@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CompletionLoader {
@@ -25,8 +26,8 @@ public class CompletionLoader {
         String inputFilePath = args[0];
         JestClient client = ElasticSearchRepository.createClient();
 
-
         ArrayList<Index> list = new ArrayList<>();
+
 
         try (BufferedReader bufferedReader = Files.newBufferedReader(Paths.get(inputFilePath))) {
             bufferedReader.lines()
@@ -49,8 +50,6 @@ public class CompletionLoader {
                             list.clear();
                             System.out.println("10000 added");
                         }
-
-
                     });
             Bulk bulk = new Bulk.Builder()
                     .defaultIndex("Actor")
@@ -64,9 +63,6 @@ public class CompletionLoader {
             }
             System.out.println(list.size() + " added");
         }
-
-
-
         System.out.println("Inserted total of " + count.get() + " actors");
     }
 }
